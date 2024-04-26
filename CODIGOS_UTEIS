@@ -21,5 +21,96 @@ ORDER BY  year
 
 /*CUMULATIVE SUM WITH RESET BASED IN A CONDITION COLUMN*/
 /*CREDITS TO FRANK KULASH FROM forums.oracle.com*/
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+/*ORACLE SQL SECTION*/
+/*JOB MONITOR*/
+
+SELECT
+    *
+FROM
+    ALL_SCHEDULER_JOB_RUN_DETAILS
+;
+
+/*JOB MONITOR*/
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/*ORACLE SQL SECTION*/
+/*SEARCH COLUMN IN THE ORACLE DATABASE*/
+
+SELECT
+    *
+FROM
+    ALL_TAB_COLUMNS
+WHERE
+    OWNER = '<SCHEMA>'
+    AND COLUMN_NAME LIKE '%<NOME_COLUNA>%' -- Busca por proximidade
+    AND COLUMN_NAME LIKE '<NOME_COLUNA>' -- Busca exata 
+;
+
+/*SEARCH COLUMN IN THE ORACLE DATABASE*/
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/*ORACLE SQL SECTION*/
+/*SEARCH INDEX IN A TABLE*/
+
+SELECT    
+     IDX.INDEX_OWNER
+    ,IDX.INDEX_NAME
+    ,IDX.TABLE_OWNER
+    ,IDX.TABLE_NAME
+    ,TRIM(LISTAGG(IDX.COLUMN_NAME, ', ') WITHIN GROUP (ORDER BY IDX.TABLE_NAME, IDX.INDEX_NAME, IDX.COLUMN_POSITION)) IDX_SEQ
+FROM 
+    ALL_IND_COLUMNS IDX
+WHERE    
+    IDX.INDEX_OWNER = '<SCHEMA>'               AND
+    IDX.TABLE_NAME = UPPER('<TABLE_NAME>')
+    --IDX.INDEX_NAME = '<INDEX_NAME>'
+GROUP BY
+     IDX.INDEX_OWNER
+    ,IDX.INDEX_NAME
+    ,IDX.TABLE_OWNER
+    ,IDX.TABLE_NAME
+;
+
+/*SEARCH INDEX IN A TABLE*/
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/*ORACLE SQL SECTION*/
+/*FIND BLOCKED SESSION AND KILL THEM*/
+
+/*FIND BLOCKED SESSION*/
+SELECT
+    OBJECT_NAME,
+    S.SID,
+    S.SERIAL#,
+    P.SPID
+FROM
+    V$LOCKED_OBJECT L,
+    DBA_OBJECTS O,
+    V$SESSION S,
+    V$PROCESS P
+WHERE
+    L.OBJECT_ID = O.OBJECT_ID AND
+    L.SESSION_ID = S.SID AND
+    S.PADDR = P.ADDR
+;
+
+/*KILL THE BLOCKED SESSION*/
+ALTER SYSTEM KILL SESSION 'SID,SERIAL#';
+
+/*FIND BLOCKED SESSION AND KILL THEM*/
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+/*ORACLE SQL SECTION*/
+/*OPEN A POPUP WHEN EXECUTTING THE SQL QUERY AND INSERT A MANUAL VALUE FOR FILTER*/
+
+SELECT
+	*
+FROM
+	<TABLE_NAME>
+WHERE
+	<COLUMN_NAME> = &VARIABLE
+
+/*OPEN A POPUP WHEN EXECUTTING THE SQL QUERY AND INSERT A MANUAL VALUE FOR FILTER*/
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
